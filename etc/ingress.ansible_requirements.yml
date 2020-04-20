@@ -1,0 +1,36 @@
+---
+
+# Requirements used by ansible-galaxy tool
+#
+- name: ansible-bootstrap-system
+  src: https://github.com/mgrzybek/ansible-bootstrap-system
+  version: master
+
+- name: ansible-consul
+  src: https://github.com/mgrzybek/ansible-consul
+  version: master
+
+- name: ansible-dnsmasq
+  src: https://github.com/mgrzybek/ansible-dnsmasq
+  version: master
+
+- name: ansible-rclone
+  src: https://github.com/mgrzybek/ansible-rclone
+  version: master
+ 
+- name: ansible-telegraf
+  src: https://github.com/mgrzybek/ansible-telegraf
+  version: master
+
+- name: ansible-podman
+  src: https://github.com/mgrzybek/ansible-podman
+  version: master
+
+- name: ansible-get-swift-objects
+  src: https://github.com/mgrzybek/ansible-get-swift-objects
+  version: master
+
+- name: ansible-traefik
+  src: https://github.com/mgrzybek/ansible-traefik
+  version: master
+

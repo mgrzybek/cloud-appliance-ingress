@@ -1,0 +1,47 @@
+- name: Bastion configuration
+  hosts: bastion
+  pre_tasks:
+    - name: Create dnsmasq configuration file
+      copy:
+        path: /etc/dnsmasq.conf
+        content: "{{ dnsmasq_conf }}"
+  roles:
+    - ansible-podman
+  vars:
+    dnsmasq_conf: |
+      #dnsmasq config, for a complete example, see:
+      #  http://oss.segetech.com/intra/srv/dnsmasq.conf
+      #log all dns queries
+      log-queries
+      #dont use hosts nameservers
+      no-resolv
+      #use cloudflare as default nameservers, prefer 1^4
+      server=1.0.0.1
+      server=1.1.1.1
+      strict-order
+      #serve all .company queries using a specific nameserver
+      server=/company/10.0.0.1
+      #explicitly define host-ip mappings
+      address=/myhost.company/10.0.0.2
+
+    podman_http_proxy: http://10.154.68.7:8080
+    podman_containers:
+      # https://hub.docker.com/r/ntpd/ntpd
+      - name: ntpd
+        description: NTP service
+        run_opts: >
+          --rm
+          --publish 123:123/udp
+          -v /etc/dnsmasq.conf:/etc/dnsmasq.conf:ro
+        image: docker.io/ntpd/ntpd:lastest
+        command: 
+        command_opts:
+      # https://hub.docker.com/r/jpillora/dnsmasq
+      - name: dnsmasq
+        description: DNS service
+        run_opts: >
+          --rm
+          --publish 53:53/udp
+        image: docker.io/jpillora/dnsmasq
+        command: 
+        command_opts:

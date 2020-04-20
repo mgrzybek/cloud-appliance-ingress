@@ -1,0 +1,150 @@
+---
+
+###############################################################################
+# OS-Ready
+#
+- name: Nodes configuration
+  hosts: localhost
+  tags: os-ready
+
+  handlers:
+    - name: reload consul
+      command: /usr/local/bin/consul reload
+
+  roles:
+    - role: ansible-bootstrap-system
+
+  post_tasks:
+    - name: Check Swift endpoint
+      ignore_errors: true
+      register: check_swift_result
+      command: openstack container list
+
+    - name: Get static content from swift
+      when: check_swift_result.stderr | length == 0
+      include_role:
+          name: ansible-get-swift-objects
+
+    - name: Install consul agent
+      when:
+          - lookup('env', 'CONSUL_USAGE') | lower == 'true'
+          - lookup('env', 'CONSUL_SERVERS').split(',') | length > 0
+      block:
+        - name: Install dnsmasq service
+          when: lookup('env', 'CONSUL_DNS_SERVER') | length > 0
+          include_role:
+              name: ansible-dnsmasq
+
+        - name: Start consul role
+          include_role:
+              name: ansible-consul
+
+        - name: Set consul services
+          notify: reload consul
+          copy:
+              content: "{{ item.content }}"
+              dest: "/etc/consul.d/{{ item.name }}.json"
+          with_items:
+              - name: traefik
+                content: "{{ traefik_consul_service[0] | to_nice_json }}"
+#              - name: telegraf
+#                content: "{{ telegraf_consul_service[0] | to_nice_json }}"
+
+###############################################################################
+# Containers
+#
+- name: Containers runtime configuration
+  hosts: localhost
+  tags: containers
+
+  pre_tasks:
+    #- name: Tuning mémoire
+    #  sysctl:
+    #    name: vm.max_map_count
+    #    value: 262144
+    #    sysctl_set: yes
+    #    state: present
+
+    - name: Installing XFS and unzip tools
+      when: ansible_os_family | lower == 'debian'
+      apt: name={{ item }} state=present
+      with_items:
+          - xfsprogs
+          - unzip
+
+    # Containers
+    - when:
+        - lookup('env', 'CONTAINERS_VOLUME') is defined
+        - lookup('env', 'CONTAINERS_VOLUME') | length > 0
+      block:
+        - name: VG listing
+          command: vgs --options name
+          register: vg_list
+
+        - when: vg_list.stdout.find('containers') < 0
+          block:
+            - name: Detect cinder volume used for containers storage
+              set_fact: containers_device_short_id="{{ lookup('env', 'CONTAINERS_VOLUME')[:20] }}"
+
+            - name: Get containers device name from /dev/disk/by-id/
+              register: cinder_volume
+              shell: find /dev/disk/by-id/ -name "*{{ containers_device_short_id }}*"
+
+            - name: Check containers device result
+              when: cinder_volume.stdout_lines | length < 1
+              fail: msg="Cannot find any cinder device with ID {{ containers_device_short_id }}"
+
+            - name: Set full disk name (containers_device={{ cinder_volume.stdout }})
+              set_fact: containers_device="{{ cinder_volume.stdout }}"
+
+            - name: Create VG called "containers"
+              lvg: vg=containers pvs="{{ containers_device }}"
+
+        - name: Create LV containers/data
+          lvol: vg=containers lv=data size=80%VG
+
+        - name: Formatting containers-data LV
+          filesystem: dev=/dev/mapper/containers-data fstype=xfs
+
+        - name: Mounting containers-data LV
+          mount:
+            path: /var/run/containers
+            src: /dev/mapper/containers-data
+            state: mounted
+            fstype: xfs
+
+  roles:
+    - role: ansible-podman
+
+  post_tasks:
+    - name: Setup to detect podman network interface
+      setup:
+
+    - name: Set consul endpoint
+      set_fact:
+        consul_endpoint: "http://{{ ansible_cn0 }}:8500"
+        telegraf_address: "{{ ansible_cn0 }}"
+
+    - name: Start the containers
+      with_items: "{{ podman_containers }}"
+      service: name={{ item.name }}.container.service state=started enabled=yes
+
+###############################################################################
+# Telegraf configuration
+#
+- name: Telegraf configuration
+  hosts: localhost
+  tags: telegraf
+
+  tasks:
+    - name: Install Telegraf
+      when:
+        - lookup('env', 'METRICS_ENDPOINT_URL') | length > 0
+        - lookup('env', 'INFLUXDB_ORG') | length > 0
+        - lookup('env', 'INFLUXDB_TOKEN') | length > 0
+        - lookup('env', 'INFLUXDB_BUCKET') | length > 0
+      block:
+        - name: Telegraf | Install telegraf client
+          include_role:
+            name: ansible-telegraf
+
