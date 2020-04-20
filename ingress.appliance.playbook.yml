@@ -122,8 +122,8 @@
 
     - name: Set consul endpoint
       set_fact:
-        consul_endpoint: "http://{{ ansible_cn0 }}:8500"
-        telegraf_address: "{{ ansible_cn0 }}"
+        consul_endpoint: "http://10.88.0.1:8500"
+        telegraf_address: "10.88.0.1"
 
     - name: Start the containers
       with_items: "{{ podman_containers }}"
