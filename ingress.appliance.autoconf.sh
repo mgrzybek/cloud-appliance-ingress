@@ -37,7 +37,7 @@ export CONSUL_DNS_DOMAIN=$CONSUL_DNS_DOMAIN
 export CONSUL_DATACENTER=$CONSUL_DATACENTER
 export CONSUL_ENCRYPT=$CONSUL_ENCRYPT
 
-sed -i 's/exit 1/false/' $REPO_PATH/ingress/ingress.appliance.autoconf.sh
+sed -i 's/exit 1/false/' $REPO_PATH/ingress.appliance.autoconf.sh
 
 . $REPO_PATH/ingress/ingress.appliance.autoconf.sh
 EOF
