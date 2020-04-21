@@ -28,7 +28,7 @@ telegraf_influxdb_listener_config:
 podman_containers:
   - name: traefik
     description: Traefik reverse proxy
-    after: "{{ podman_pods[0].name }}.pod.service"
+    after:
     run_opts: >
       --rm
       --env HTTP_PROXY= --env HTTPS_PROXY=
@@ -44,9 +44,9 @@ podman_containers:
       --accesslog.format=json
       --log=true
       --log.format=json
-      --providers.consulcatalog.endpoint.address={{ consul_endpoint }}
+      --providers.consulcatalog.endpoint.address=http://10.88.0.1:8500
       --providers.consulcatalog.prefix={{ lookup('env', 'TRAEFIK_CONSUL_PREFIX') }}
       --metrics.influxdb=true
       --metrics.influxdb.protocol=http
-      --metrics.influxdb.address={{ telegraf_address }}:{{ telegraf_influxdb_listener_config.service_address | regex_replace('^\.*?:','') }}
+      --metrics.influxdb.address=10.88.0.1:{{ telegraf_influxdb_listener_config.service_address | regex_replace('^\.*?:','') }}
 
