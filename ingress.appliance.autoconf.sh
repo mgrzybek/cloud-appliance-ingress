@@ -44,12 +44,7 @@ EOF
 
 ansible-galaxy install -r $ETC_PATH/ingress.ansible_requirements.yml
 
-ansible-playbook -t os-ready $PLAYBOOK \
+ansible-playbook -t all $PLAYBOOK \
 	-e@$ETC_PATH/ingress.variables.yml \
 	-e dnsmasq_listening_interfaces="{{['lo']|from_yaml}}"
-
-ansible-playbook -t containers $PLAYBOOK
-
-ansible-playbook -t ingress,configuration,telegraf $PLAYBOOK \
-	-e@$ETC_PATH/ingress.variables.yml
 
