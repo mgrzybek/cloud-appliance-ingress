@@ -20,16 +20,28 @@
       register: check_swift_result
       command: openstack container list
 
-    - name: Get static content from swift
+    - name: Install artifacts from swift
       when: check_swift_result.stderr | length == 0
-      include_role:
-          name: ansible-get-swift-objects
+      block:
+        - name: Installing unzip
+          package: name={{ item }} state=present
+          with_items:
+              - unzip
+
+        - name: Get static content from swift
+          include_role:
+              name: ansible-get-swift-objects
 
     - name: Install consul agent
       when:
           - lookup('env', 'CONSUL_USAGE') | lower == 'true'
           - lookup('env', 'CONSUL_SERVERS').split(',') | length > 0
       block:
+        - name: Installing unzip
+          package: name={{ item }} state=present
+          with_items:
+              - unzip
+
         - name: Install dnsmasq service
           when: lookup('env', 'CONSUL_DNS_SERVER') | length > 0
           include_role:
@@ -58,25 +70,16 @@
   tags: containers
 
   pre_tasks:
-    #- name: Tuning mémoire
-    #  sysctl:
-    #    name: vm.max_map_count
-    #    value: 262144
-    #    sysctl_set: yes
-    #    state: present
-
-    - name: Installing XFS and unzip tools
-      when: ansible_os_family | lower == 'debian'
-      apt: name={{ item }} state=present
-      with_items:
-          - xfsprogs
-          - unzip
-
     # Containers
     - when:
         - lookup('env', 'CONTAINERS_VOLUME') is defined
         - lookup('env', 'CONTAINERS_VOLUME') | length > 0
       block:
+        - name: Installing XFS
+          package: name={{ item }} state=present
+          with_items:
+              - xfsprogs
+
         - name: VG listing
           command: vgs --options name
           register: vg_list
