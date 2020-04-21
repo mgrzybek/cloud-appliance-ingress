@@ -39,7 +39,7 @@ export CONSUL_ENCRYPT=$CONSUL_ENCRYPT
 
 sed -i 's/exit 1/false/' $REPO_PATH/ingress.appliance.autoconf.sh
 
-. $REPO_PATH/ingress/ingress.appliance.autoconf.sh
+. $REPO_PATH/ingress.appliance.autoconf.sh
 EOF
 
 ansible-galaxy install -r $ETC_PATH/ingress.ansible_requirements.yml
