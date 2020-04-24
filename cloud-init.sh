@@ -75,14 +75,14 @@ export CONSUL_DNS_SERVER="${consul_dns_server}"
 export TRAEFIK_CONSUL_PREFIX="${traefik_consul_prefix}"
 
 # Test proxy and Openstack endpoint
-test -z $HTTP_PROXY || curl -vks HTTP_PROXY > /dev/null
+test -z $HTTP_PROXY || curl -vks $HTTP_PROXY > /dev/null
 openstack server list
 
 # Set NTP variables
 export NTP_SERVER=${ntp_server}
 
 # Autoconf the appliance
-curl -vks ${git_repo_url} > /dev/null
+curl -m 1 -vks ${git_repo_url} > /dev/null
 git clone -b ${git_repo_checkout} ${git_repo_url} $REPO_PATH || exit 1
 
 . $REPO_PATH/ingress.appliance.autoconf.sh
