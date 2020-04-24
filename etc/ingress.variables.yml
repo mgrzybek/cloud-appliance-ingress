@@ -55,7 +55,7 @@ dnsmasq_main_conf:
     - "{{ lookup('env', 'consul_dns_server') }}"
 
 dnsmasq_forwarding_zones:
-  - name: "{{ consul_domain_name }}"
+  - name: "{{ lookup('env', 'consul_dns_domain') }}"
     forwarder:
       hostname: 127.0.0.1
       port: 8600
