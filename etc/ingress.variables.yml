@@ -60,3 +60,5 @@ dnsmasq_forwarding_zones:
       hostname: 127.0.0.1
       port: 8600
 
+consul_http_proxy: "{{ lookup('env', 'http_proxy') }}"
+
