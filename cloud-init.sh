@@ -70,6 +70,7 @@ export CONSUL_DNS_DOMAIN="${consul_dns_domain}"
 export CONSUL_DATACENTER="${consul_datacenter}"
 export CONSUL_ENCRYPT="${consul_encrypt}"
 export CONSUL_DNS_SERVER="${consul_dns_server}"
+export CONSUL_SERVER="${consul_server}"
 
 # Traefik variables
 export TRAEFIK_CONSUL_PREFIX="${traefik_consul_prefix}"

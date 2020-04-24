@@ -61,4 +61,5 @@ dnsmasq_forwarding_zones:
       port: 8600
 
 consul_http_proxy: "{{ lookup('env', 'http_proxy') }}"
+consul_retry_join: "{{ lookup('env', 'consul_server') }}"
 
