@@ -50,3 +50,13 @@ podman_containers:
       --metrics.influxdb.protocol=http
       --metrics.influxdb.address=10.88.0.1:{{ telegraf_influxdb_listener_config.service_address | regex_replace('^\.*?:','') }}
 
+dnsmasq_main_conf:
+  servers:
+    - "{{ lookup('env', 'consul_dns_server') }}"
+
+dnsmasq_forwarding_zones:
+  - name: "{{ consul_domain_name }}"
+    forwarder:
+      hostname: 127.0.0.1
+      port: 8600
+
