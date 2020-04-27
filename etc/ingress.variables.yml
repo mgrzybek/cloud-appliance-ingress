@@ -38,8 +38,8 @@ podman_containers:
     image: docker.io/library/traefik
     command: traefik
     command_opts: >
-      --entrypoints.web.address=":8080"
-      --entrypoints.websecure.address=":8443"
+      --entrypoints.web.address=:8080
+      --entrypoints.websecure.address=:8443
       --accesslog=true
       --accesslog.format=json
       --log=true
