@@ -23,6 +23,7 @@
     - name: Install artifacts from swift
       when:
         - check_swift_result is defined
+        - check_swift_result.stderr is defined
         - check_swift_result.stderr | length == 0
       block:
         - name: Installing unzip
