@@ -21,7 +21,9 @@
       command: openstack container list
 
     - name: Install artifacts from swift
-      when: check_swift_result.stderr | length == 0
+      when:
+        - check_swift_result is defined
+        - check_swift_result.stderr | length == 0
       block:
         - name: Installing unzip
           package: name={{ item }} state=present
