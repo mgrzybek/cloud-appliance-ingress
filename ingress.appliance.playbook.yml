@@ -64,6 +64,15 @@
 #              - name: telegraf
 #                content: "{{ telegraf_consul_service[0] | to_nice_json }}"
 
+    - name: Telegraf | Install telegraf client
+      when:
+        - lookup('env', 'METRICS_ENDPOINT_URL') | length > 0
+        - lookup('env', 'INFLUXDB_ORG') | length > 0
+        - lookup('env', 'INFLUXDB_TOKEN') | length > 0
+        - lookup('env', 'INFLUXDB_BUCKET') | length > 0
+      include_role:
+        name: ansible-telegraf
+
 ###############################################################################
 # Containers
 #
@@ -125,23 +134,4 @@
     - name: Start the containers
       with_items: "{{ podman_containers }}"
       service: name={{ item.name }}.container.service state=started enabled=yes
-
-###############################################################################
-# Telegraf configuration
-#
-- name: Telegraf configuration
-  hosts: localhost
-  tags: telegraf
-
-  tasks:
-    - name: Install Telegraf
-      when:
-        - lookup('env', 'METRICS_ENDPOINT_URL') | length > 0
-        - lookup('env', 'INFLUXDB_ORG') | length > 0
-        - lookup('env', 'INFLUXDB_TOKEN') | length > 0
-        - lookup('env', 'INFLUXDB_BUCKET') | length > 0
-      block:
-        - name: Telegraf | Install telegraf client
-          include_role:
-            name: ansible-telegraf
 
