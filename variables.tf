@@ -78,7 +78,7 @@ variable "static_hosts" {
   default     = ""
 }
 
-variable "flavor" {
+variable "flavor_id" {
   type        = string
   description = "Cloud flavor to use"
 }
@@ -143,6 +143,11 @@ variable "consul_dns_server" {
   type        = string
   description = "IP address to use for non-consul-managed domains"
   default     = ""
+}
+
+variable "consul_server" {
+  type        = string
+  description = "Consul server IP address to join"
 }
 
 ##############################################################################

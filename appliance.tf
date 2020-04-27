@@ -4,9 +4,8 @@
 resource "openstack_compute_instance_v2" "appliance-ingress" {
   name      = "ingress"
   image_id  = var.image_id
-  flavor_id = var.flavor
+  flavor_id = var.flavor_id
 
-  key_pair = "mathieu-rsa"
 
   network {
     port = openstack_networking_port_v2.appliance-ingress-front-port.id
@@ -36,6 +35,7 @@ resource "openstack_compute_instance_v2" "appliance-ingress" {
       consul_datacenter = var.consul_datacenter,
       consul_encrypt    = var.consul_encrypt,
       consul_dns_server = var.consul_dns_server,
+      consul_server     = var.consul_server,
 
       traefik_consul_prefix = var.traefik_consul_prefix,
 
