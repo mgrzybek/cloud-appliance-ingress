@@ -8,7 +8,7 @@ traefik_consul_service:
       port: 80
       enable_tag_override: false
       checks:
-          - arg: [ "systemctl", "status", "traefik.service" ]
+          - args: [ "systemctl", "status", "traefik.service" ]
             interval: "60s"
 
 telegraf_output_influxdbv2_config:
