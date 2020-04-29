@@ -62,4 +62,5 @@ dnsmasq_forwarding_zones:
 
 consul_http_proxy: "{{ lookup('env', 'http_proxy') }}"
 consul_retry_join: "{{ lookup('env', 'consul_server') }}"
+consul_bind: 10.88.0.1
 
