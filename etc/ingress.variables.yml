@@ -44,6 +44,10 @@ telegraf_influxdb_listener_config:
 # Podman
 #
 
+podman_http_proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
+podman_https_proxy: "{{ lookup('env', 'HTTPS_PROXY') }}"
+podman_no_proxy: "{{ lookup('env', 'NO_PROXY') }}"
+
 podman_containers:
   - name: traefik
     description: Traefik reverse proxy
