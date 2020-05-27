@@ -71,6 +71,7 @@ export CONSUL_DATACENTER="${consul_datacenter}"
 export CONSUL_ENCRYPT="${consul_encrypt}"
 export CONSUL_DNS_SERVER="${consul_dns_server}"
 export CONSUL_SERVER="${consul_server}"
+export BACK_IP="${backoffice_ip_address}"
 
 # Traefik variables
 export TRAEFIK_CONSUL_PREFIX="${traefik_consul_prefix}"

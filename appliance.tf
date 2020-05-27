@@ -43,6 +43,8 @@ resource "openstack_compute_instance_v2" "appliance-ingress" {
 
       git_repo_checkout = var.git_repo_checkout,
       git_repo_url      = var.git_repo_url
+
+      backoffice_ip_address = openstack_networking_port_v2.appliance-ingress-back-port.all_fixed_ips[0]
     }
   )
 }
