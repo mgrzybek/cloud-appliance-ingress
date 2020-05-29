@@ -37,6 +37,18 @@ variable "os_region_name" {
   description = "Cloud region name"
 }
 
+variable "git_repo_username" {
+  type        = string
+  description = "git username"
+  default     = ""
+}
+
+variable "git_repo_password" {
+  type        = string
+  description = "git password"
+  default     = ""
+}
+
 variable "git_repo_url" {
   type        = string
   description = "cloud-appliance-ingress repo"
