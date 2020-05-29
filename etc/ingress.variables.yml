@@ -97,7 +97,7 @@ consul_http_proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
 consul_bind: "{{ lookup('env', 'BACK_IP') }}"
 consul_advertise_addr: "{{ lookup('env', 'BACK_IP') }}"
 consul_serf_lan_bind: "{{ lookup('env', 'BACK_IP') }}"
-consul_client_addr: [ "127.0.0.1", "10.88.0.1" ]
+consul_client_addr: [ "0.0.0.0" ]
 consul_server_mode: false
 consul_consul_encrypt: "{{ lookup('env', 'CONSUL_ENCRYPT') }}"
 
