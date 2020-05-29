@@ -101,3 +101,11 @@ consul_client_addr: [ "0.0.0.0" ]
 consul_server_mode: false
 consul_consul_encrypt: "{{ lookup('env', 'CONSUL_ENCRYPT') }}"
 
+###############################################################################
+# Docker
+#
+docker_https_proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
+docker_http_no_proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
+docker_config_consul: true
+docker_config_telegraf: true
+
