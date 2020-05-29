@@ -69,6 +69,7 @@ podman_containers:
       --log.format=json
       --providers.consulcatalog.endpoint.address=http://10.88.0.1:8500
       --providers.consulcatalog.prefix={{ lookup('env', 'TRAEFIK_CONSUL_PREFIX') }}
+      --providers.consulcatalog.exposedByDefault=false
       --metrics.influxdb=true
       --metrics.influxdb.protocol=http
       --metrics.influxdb.address=10.88.0.1:{{ telegraf_influxdb_listener_config.service_address | regex_replace('^\.*?:','') }}
