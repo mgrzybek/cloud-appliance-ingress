@@ -134,9 +134,9 @@ variable "syslog_port" {
 #
 
 variable "influxdb_usage" {
-type        = bool
-description = "Do we send metrics to InfluxDB?"
-default     = false
+  type        = bool
+  description = "Do we send metrics to InfluxDB?"
+  default     = false
 }
 
 variable "influxdb_endpoint" {

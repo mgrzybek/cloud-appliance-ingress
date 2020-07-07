@@ -1,5 +1,3 @@
----
-
 ###############################################################################
 # OS-Ready
 #
@@ -8,71 +6,71 @@
   tags: os-ready
 
   handlers:
-    - name: reload consul
-      command: /usr/local/bin/consul reload
+  - name: reload consul
+    command: /usr/local/bin/consul reload
 
   roles:
-    - role: ansible-bootstrap-system
+  - role: ansible-bootstrap-system
 
   post_tasks:
-    - name: Check Swift endpoint
-      ignore_errors: true
-      register: check_swift_result
-      command: openstack container list
+  - name: Check Swift endpoint
+    ignore_errors: true
+    register: check_swift_result
+    command: openstack container list
 
-    - name: Install artifacts from swift
-      when:
-        - check_swift_result is defined
-        - check_swift_result.stderr is defined
-        - check_swift_result.stderr | length == 0
-      block:
-        - name: Installing unzip
-          package: name={{ item }} state=present
-          with_items:
-              - unzip
+  - name: Install artifacts from swift
+    when:
+    - check_swift_result is defined
+    - check_swift_result.stderr is defined
+    - check_swift_result.stderr | length == 0
+    block:
+    - name: Installing unzip
+      package: name={{ item }} state=present
+      with_items:
+      - unzip
 
-        - name: Get static content from swift
-          include_role:
-              name: ansible-get-swift-objects
+    - name: Get static content from swift
+      include_role:
+        name: ansible-get-swift-objects
 
-    - name: Install consul agent
-      when:
-          - lookup('env', 'CONSUL_USAGE') | lower == 'true'
-          - lookup('env', 'CONSUL_SERVER').split(',') | length > 0
-      block:
-        - name: Installing unzip
-          package: name={{ item }} state=present
-          with_items:
-              - unzip
+  - name: Install consul agent
+    when:
+    - lookup('env', 'CONSUL_USAGE') | lower == 'true'
+    - lookup('env', 'CONSUL_SERVER').split(',') | length > 0
+    block:
+    - name: Installing unzip
+      package: name={{ item }} state=present
+      with_items:
+      - unzip
 
-        - name: Install dnsmasq service
-          when: lookup('env', 'CONSUL_DNS_SERVER') | length > 0
-          include_role:
-              name: ansible-dnsmasq
+    - name: Install dnsmasq service
+      when: lookup('env', 'CONSUL_DNS_SERVER') | length > 0
+      include_role:
+        name: ansible-dnsmasq
 
-        - name: Start consul role
-          include_role:
-              name: ansible-consul
+    - name: Start consul role
+      include_role:
+        name: ansible-consul
 
-        - name: Set consul services
-          notify: reload consul
-          copy:
-              content: "{{ item.content }}"
-              dest: "/etc/consul.d/{{ item.name }}.json"
-          with_items:
-              - name: traefik
-                content: "{{ traefik_consul_service[0] | to_nice_json }}"
+    - name: Set consul services
+      notify: reload consul
+      copy:
+        content: '{{ item.content }}'
+        dest: /etc/consul.d/{{ item.name }}.json
+      with_items:
+      - name: traefik
+        content: '{{ traefik_consul_service[0] | to_nice_json }}'
 #              - name: telegraf
 #                content: "{{ telegraf_consul_service[0] | to_nice_json }}"
 
-    - name: Telegraf | Install telegraf client
-      when:
-        - lookup('env', 'METRICS_ENDPOINT_URL') | length > 0
-        - lookup('env', 'INFLUXDB_ORG') | length > 0
-        - lookup('env', 'INFLUXDB_TOKEN') | length > 0
-        - lookup('env', 'INFLUXDB_BUCKET') | length > 0
-      include_role:
-        name: ansible-telegraf
+  - name: Telegraf | Install telegraf client
+    when:
+    - lookup('env', 'METRICS_ENDPOINT_URL') | length > 0
+    - lookup('env', 'INFLUXDB_ORG') | length > 0
+    - lookup('env', 'INFLUXDB_TOKEN') | length > 0
+    - lookup('env', 'INFLUXDB_BUCKET') | length > 0
+    include_role:
+      name: ansible-telegraf
 
 ###############################################################################
 # Containers
@@ -83,73 +81,73 @@
 
   pre_tasks:
     # Containers
-    - when:
-        - lookup('env', 'CONTAINERS_VOLUME') is defined
-        - lookup('env', 'CONTAINERS_VOLUME') | length > 0
+  - when:
+    - lookup('env', 'CONTAINERS_VOLUME') is defined
+    - lookup('env', 'CONTAINERS_VOLUME') | length > 0
+    block:
+    - name: Installing XFS
+      package: name={{ item }} state=present
+      with_items:
+      - xfsprogs
+
+    - name: VG listing
+      command: vgs --options name
+      register: vg_list
+
+    - when: vg_list.stdout.find('containers') < 0
       block:
-        - name: Installing XFS
-          package: name={{ item }} state=present
-          with_items:
-              - xfsprogs
+      - name: Detect cinder volume used for containers storage
+        set_fact: containers_device_short_id="{{ lookup('env', 'CONTAINERS_VOLUME')[:20] }}"
 
-        - name: VG listing
-          command: vgs --options name
-          register: vg_list
+      - name: Get containers device name from /dev/disk/by-id/
+        register: cinder_volume
+        shell: find /dev/disk/by-id/ -name "*{{ containers_device_short_id }}*"
 
-        - when: vg_list.stdout.find('containers') < 0
-          block:
-            - name: Detect cinder volume used for containers storage
-              set_fact: containers_device_short_id="{{ lookup('env', 'CONTAINERS_VOLUME')[:20] }}"
+      - name: Check containers device result
+        when: cinder_volume.stdout_lines | length < 1
+        fail: msg="Cannot find any cinder device with ID {{ containers_device_short_id }}"
 
-            - name: Get containers device name from /dev/disk/by-id/
-              register: cinder_volume
-              shell: find /dev/disk/by-id/ -name "*{{ containers_device_short_id }}*"
+      - name: Set full disk name (containers_device={{ cinder_volume.stdout }})
+        set_fact: containers_device="{{ cinder_volume.stdout }}"
 
-            - name: Check containers device result
-              when: cinder_volume.stdout_lines | length < 1
-              fail: msg="Cannot find any cinder device with ID {{ containers_device_short_id }}"
+      - name: Create VG called "containers"
+        lvg: vg=containers pvs="{{ containers_device }}"
 
-            - name: Set full disk name (containers_device={{ cinder_volume.stdout }})
-              set_fact: containers_device="{{ cinder_volume.stdout }}"
+    - name: Create LV containers/data
+      lvol: vg=containers lv=data size=80%VG
 
-            - name: Create VG called "containers"
-              lvg: vg=containers pvs="{{ containers_device }}"
+    - name: Formatting containers-data LV
+      filesystem: dev=/dev/mapper/containers-data fstype=xfs
 
-        - name: Create LV containers/data
-          lvol: vg=containers lv=data size=80%VG
+    - name: Mounting containers-data LV
+      mount:
+        path: /var/run/containers
+        src: /dev/mapper/containers-data
+        state: mounted
+        fstype: xfs
 
-        - name: Formatting containers-data LV
-          filesystem: dev=/dev/mapper/containers-data fstype=xfs
+  - name: Check project atomic ppa repo
+    register: repo_stat
+    stat: path=/etc/apt/sources.list.d/projectatomic-ubuntu-ppa-{{ ansible_distribution_release }}.list
 
-        - name: Mounting containers-data LV
-          mount:
-            path: /var/run/containers
-            src: /dev/mapper/containers-data
-            state: mounted
-            fstype: xfs
+  - name: Configure podman
+    when: repo_stat.exists | lower == 'false'
+    include_role:
+      name: ansible-podman
 
-    - name: Check project atomic ppa repo
-      register: repo_stat
-      stat: path=/etc/apt/sources.list.d/projectatomic-ubuntu-ppa-{{ ansible_distribution_release }}.list
+  - name: Pull images and deal with poor internet connection
+    with_items: '{{ podman_containers }}'
+    register: pull_image
+    until: pull_image is success
+    retries: 5
+    delay: 30
+    shell: podman pull {{ item.image }}
+    environment:
+      https_proxy: '{{ podman_https_proxy }}'
+      http_proxy: '{{ podman_http_proxy }}'
+      no_proxy: '{{ podman_http_no_proxy }}'
 
-    - name: Configure podman
-      when: repo_stat.exists | lower == 'false'
-      include_role:
-          name: ansible-podman
-
-    - name: Pull images and deal with poor internet connection
-      with_items: "{{ podman_containers }}"
-      register: pull_image
-      until: pull_image is success
-      retries: 5
-      delay: 30
-      shell: podman pull {{ item.image }}
-      environment:
-        https_proxy: "{{ podman_https_proxy }}"
-        http_proxy: "{{ podman_http_proxy }}"
-        no_proxy: "{{ podman_http_no_proxy }}"
-
-    - name: Start the containers
-      with_items: "{{ podman_containers }}"
-      service: name={{ item.name }}.container.service state=started enabled=yes
+  - name: Start the containers
+    with_items: '{{ podman_containers }}'
+    service: name={{ item.name }}.container.service state=started enabled=yes
 

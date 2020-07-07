@@ -1,4 +1,3 @@
----
 ###############################################################################
 # Bootstrap
 #
@@ -6,35 +5,35 @@ bootstrap_http_proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
 bootstrap_no_proxy: "{{ lookup('env', 'NO_PROXY') }}"
 bootstrap_http_proxy_packages:
 bootstrap_http_proxy_packages_per_repo:
-  - host: download.opensuse.org
-    proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
-  - host: ppa.launchpad.net
-    proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
+- host: download.opensuse.org
+  proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
+- host: ppa.launchpad.net
+  proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
 
 ###############################################################################
 # Telegraf
 #
 
 traefik_consul_service:
-  - service:
-      name: "traefik"
-      tags:
-          - "appliance"
-      port: 80
-      enable_tag_override: false
-      checks:
-          - args: [ "systemctl", "status", "traefik.service" ]
-            interval: "60s"
+- service:
+    name: traefik
+    tags:
+    - appliance
+    port: 80
+    enable_tag_override: false
+    checks:
+    - args: [systemctl, status, traefik.service]
+      interval: 60s
 
 telegraf_output_influxdbv2_config:
   token: lookup('env', 'INFLUXDB_TOKEN')
   org: lookup('env', 'INFLUXDB_ORG')
   bucket: lookup('env', 'INFLUXDB_BUCKET')
   urls:
-    - lookup('env', 'INFLUXDB_ENDPOINT_URL')
+  - lookup('env', 'INFLUXDB_ENDPOINT_URL')
 
 telegraf_influxdb_listener_config:
-  service_address: ":8086"
+  service_address: :8086
   read_timeout: 10s
   write_timeout: 10s
   max_body_size: 0
@@ -49,30 +48,30 @@ podman_https_proxy: "{{ lookup('env', 'HTTPS_PROXY') }}"
 podman_no_proxy: "{{ lookup('env', 'NO_PROXY') }}"
 
 podman_containers:
-  - name: traefik
-    description: Traefik reverse proxy
-    after:
-    run_opts: >
-      --rm
-      --env HTTP_PROXY= --env HTTPS_PROXY=
-      --env http_proxy= --env https_proxy=
-      --publish 80:8080
-      --publish 443:8443
-    image: docker.io/library/traefik
-    command: traefik
-    command_opts: >
-      --entrypoints.web.address=:8080
-      --entrypoints.websecure.address=:8443
-      --accesslog=true
-      --accesslog.format=json
-      --log=true
-      --log.format=json
-      --providers.consulcatalog.endpoint.address=http://10.88.0.1:8500
-      --providers.consulcatalog.prefix={{ lookup('env', 'TRAEFIK_CONSUL_PREFIX') }}
-      --providers.consulcatalog.exposedByDefault=false
-      --metrics.influxdb=true
-      --metrics.influxdb.protocol=http
-      --metrics.influxdb.address=10.88.0.1:{{ telegraf_influxdb_listener_config.service_address | regex_replace('^\.*?:','') }}
+- name: traefik
+  description: Traefik reverse proxy
+  after:
+  run_opts: >
+    --rm
+    --env HTTP_PROXY= --env HTTPS_PROXY=
+    --env http_proxy= --env https_proxy=
+    --publish 80:8080
+    --publish 443:8443
+  image: docker.io/library/traefik
+  command: traefik
+  command_opts: >
+    --entrypoints.web.address=:8080
+    --entrypoints.websecure.address=:8443
+    --accesslog=true
+    --accesslog.format=json
+    --log=true
+    --log.format=json
+    --providers.consulcatalog.endpoint.address=http://10.88.0.1:8500
+    --providers.consulcatalog.prefix={{ lookup('env', 'TRAEFIK_CONSUL_PREFIX') }}
+    --providers.consulcatalog.exposedByDefault=false
+    --metrics.influxdb=true
+    --metrics.influxdb.protocol=http
+    --metrics.influxdb.address=10.88.0.1:{{ telegraf_influxdb_listener_config.service_address | regex_replace('^\.*?:','') }}
 
 ###############################################################################
 # Dnsmasq
@@ -80,25 +79,25 @@ podman_containers:
 
 dnsmasq_main_conf:
   servers:
-    - "{{ lookup('env', 'consul_dns_server') }}"
+  - "{{ lookup('env', 'consul_dns_server') }}"
 
 dnsmasq_forwarding_zones:
-  - name: "{{ lookup('env', 'consul_dns_domain') }}"
-    forwarder:
-      hostname: 127.0.0.1
-      port: 8600
+- name: "{{ lookup('env', 'consul_dns_domain') }}"
+  forwarder:
+    hostname: 127.0.0.1
+    port: 8600
 
 ###############################################################################
 # Consul
 #
-consul_retry_join: [ "{{ lookup('env', 'CONSUL_SERVERS') }}" ]
+consul_retry_join: ["{{ lookup('env', 'CONSUL_SERVERS') }}"]
 consul_dns_domain: "{{ lookup('env', 'CONSUL_DNS_DOMAIN') }}"
 consul_datacenter: "{{ lookup('env', 'CONSUL_DATACENTER') }}"
 consul_http_proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
 consul_bind: "{{ lookup('env', 'BACK_IP') }}"
 consul_advertise_addr: "{{ lookup('env', 'BACK_IP') }}"
 consul_serf_lan_bind: "{{ lookup('env', 'BACK_IP') }}"
-consul_client_addr: [ "0.0.0.0" ]
+consul_client_addr: [0.0.0.0]
 consul_server_mode: false
 consul_consul_encrypt: "{{ lookup('env', 'CONSUL_ENCRYPT') }}"
 

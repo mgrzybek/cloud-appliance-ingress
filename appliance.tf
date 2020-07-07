@@ -22,28 +22,28 @@ resource "openstack_compute_instance_v2" "appliance-ingress" {
       os_password    = var.os_password
       os_region_name = var.os_region_name
 
-       influxdb_endpoint = var.influxdb_endpoint
-      influxdb_token       = var.influxdb_token
-      influxdb_bucket      = var.influxdb_bucket
-      influxdb_org         = var.influxdb_org
+      influxdb_endpoint = var.influxdb_endpoint
+      influxdb_token    = var.influxdb_token
+      influxdb_bucket   = var.influxdb_bucket
+      influxdb_org      = var.influxdb_org
 
       consul_usage      = var.consul_usage
       consul_dns_domain = var.consul_dns_domain
       consul_datacenter = var.consul_datacenter
       consul_encrypt    = var.consul_encrypt
       consul_dns_server = var.consul_dns_server
-      consul_servers     = var.consul_servers
+      consul_servers    = var.consul_servers
 
       syslog_hostname   = var.syslog_hostname
-syslog_port       = var.syslog_port
-syslog_protocol   = var.syslog_protocol
-syslog_log_format = var.syslog_log_format
+      syslog_port       = var.syslog_port
+      syslog_protocol   = var.syslog_protocol
+      syslog_log_format = var.syslog_log_format
 
       influxdb_usage    = var.influxdb_usage
-influxdb_endpoint = var.influxdb_endpoint
-influxdb_token    = var.influxdb_token
-influxdb_org      = var.influxdb_org
-influxdb_bucket   = var.influxdb_bucket
+      influxdb_endpoint = var.influxdb_endpoint
+      influxdb_token    = var.influxdb_token
+      influxdb_org      = var.influxdb_org
+      influxdb_bucket   = var.influxdb_bucket
 
       traefik_consul_prefix = var.traefik_consul_prefix
 

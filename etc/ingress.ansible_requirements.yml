@@ -1,5 +1,3 @@
----
-
 # Requirements used by ansible-galaxy tool
 #
 - name: ansible-bootstrap-system
@@ -17,7 +15,7 @@
 - name: ansible-rclone
   src: https://github.com/mgrzybek/ansible-rclone
   version: master
- 
+
 - name: ansible-telegraf
   src: https://github.com/mgrzybek/ansible-telegraf
   version: master
