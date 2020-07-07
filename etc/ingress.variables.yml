@@ -31,7 +31,7 @@ telegraf_output_influxdbv2_config:
   org: lookup('env', 'INFLUXDB_ORG')
   bucket: lookup('env', 'INFLUXDB_BUCKET')
   urls:
-    - lookup('env', 'METRICS_ENDPOINT_URL')
+    - lookup('env', 'INFLUXDB_ENDPOINT_URL')
 
 telegraf_influxdb_listener_config:
   service_address: ":8086"
@@ -91,7 +91,7 @@ dnsmasq_forwarding_zones:
 ###############################################################################
 # Consul
 #
-consul_retry_join: [ "{{ lookup('env', 'CONSUL_SERVER') }}" ]
+consul_retry_join: [ "{{ lookup('env', 'CONSUL_SERVERS') }}" ]
 consul_dns_domain: "{{ lookup('env', 'CONSUL_DNS_DOMAIN') }}"
 consul_datacenter: "{{ lookup('env', 'CONSUL_DATACENTER') }}"
 consul_http_proxy: "{{ lookup('env', 'HTTP_PROXY') }}"

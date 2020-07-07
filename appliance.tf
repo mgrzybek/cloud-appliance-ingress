@@ -6,7 +6,6 @@ resource "openstack_compute_instance_v2" "appliance-ingress" {
   image_id  = var.image_id
   flavor_id = var.flavor_id
 
-
   network {
     port = openstack_networking_port_v2.appliance-ingress-front-port.id
   }
@@ -14,34 +13,43 @@ resource "openstack_compute_instance_v2" "appliance-ingress" {
   user_data = templatefile(
     "${path.module}/cloud-init.sh",
     {
-      internet_http_proxy_url = var.internet_http_proxy_url,
-      internet_http_no_proxy  = var.internet_http_no_proxy,
-      static_hosts            = var.static_hosts,
+      internet_http_proxy_url = var.internet_http_proxy_url
+      internet_http_no_proxy  = var.internet_http_no_proxy
+      static_hosts            = var.static_hosts
 
-      os_auth_url    = var.os_auth_url,
-      os_username    = var.os_username,
-      os_password    = var.os_password,
-      os_region_name = var.os_region_name,
+      os_auth_url    = var.os_auth_url
+      os_username    = var.os_username
+      os_password    = var.os_password
+      os_region_name = var.os_region_name
 
-      metrics_endpoint_url = var.metrics_endpoint_url,
-      influxdb_token       = var.influxdb_token,
-      influxdb_bucket      = var.influxdb_bucket,
-      influxdb_org         = var.influxdb_org,
+       influxdb_endpoint = var.influxdb_endpoint
+      influxdb_token       = var.influxdb_token
+      influxdb_bucket      = var.influxdb_bucket
+      influxdb_org         = var.influxdb_org
 
-      logs_endpoint_url = var.logs_endpoint_url,
+      consul_usage      = var.consul_usage
+      consul_dns_domain = var.consul_dns_domain
+      consul_datacenter = var.consul_datacenter
+      consul_encrypt    = var.consul_encrypt
+      consul_dns_server = var.consul_dns_server
+      consul_servers     = var.consul_servers
 
-      consul_usage      = var.consul_usage,
-      consul_dns_domain = var.consul_dns_domain,
-      consul_datacenter = var.consul_datacenter,
-      consul_encrypt    = var.consul_encrypt,
-      consul_dns_server = var.consul_dns_server,
-      consul_server     = var.consul_server,
+      syslog_hostname   = var.syslog_hostname
+syslog_port       = var.syslog_port
+syslog_protocol   = var.syslog_protocol
+syslog_log_format = var.syslog_log_format
 
-      traefik_consul_prefix = var.traefik_consul_prefix,
+      influxdb_usage    = var.influxdb_usage
+influxdb_endpoint = var.influxdb_endpoint
+influxdb_token    = var.influxdb_token
+influxdb_org      = var.influxdb_org
+influxdb_bucket   = var.influxdb_bucket
 
-      ntp_server = var.ntp_server,
+      traefik_consul_prefix = var.traefik_consul_prefix
 
-      git_repo_checkout = var.git_repo_checkout,
+      ntp_server = var.ntp_server
+
+      git_repo_checkout = var.git_repo_checkout
       git_repo_url      = var.git_repo_url
 
       backoffice_ip_address = openstack_networking_port_v2.appliance-ingress-back-port.all_fixed_ips[0]
@@ -76,4 +84,3 @@ resource "openstack_networking_secgroup_rule_v2" "appliance-ingress-secgroup-htt
   remote_ip_prefix  = "0.0.0.0/0"
   security_group_id = openstack_networking_secgroup_v2.appliance-ingress-secgroup.id
 }
-

@@ -56,21 +56,20 @@ export OS_PASSWORD="${os_password}"
 export OS_REGION_NAME="${os_region_name}"
 export OS_INTERFACE=public
 export OS_IDENTITY_API_VERSION=3
-                        
+
 # Set the InfluxDB credentials
 export INFLUXDB_ORG="${influxdb_org}"
 export INFLUXDB_TOKEN="${influxdb_token}"
 export INFLUXDB_BUCKET=${influxdb_bucket}
-# Set metrics endpoint
-export METRICS_ENDPOINT_URL="${metrics_endpoint_url}"
-                        
+export INFLUXDB_ENDPOINT="${influxdb_endpoint}"
+
 # Set Consul variables
 export CONSUL_USAGE="${consul_usage}"
 export CONSUL_DNS_DOMAIN="${consul_dns_domain}"
 export CONSUL_DATACENTER="${consul_datacenter}"
 export CONSUL_ENCRYPT="${consul_encrypt}"
 export CONSUL_DNS_SERVER="${consul_dns_server}"
-export CONSUL_SERVER="${consul_server}"
+export CONSUL_SERVERS="${consul_servers}"
 export BACK_IP="${backoffice_ip_address}"
 
 # Traefik variables

@@ -95,11 +95,51 @@ variable "flavor_id" {
   description = "Cloud flavor to use"
 }
 
+# Sending logs to a remote Graylog endpoint
+variable "syslog_protocol" {
+  type        = string
+  description = "Protocol used to send logs: udp, tcp or http"
+  default     = "udp"
+
+  #  validation {
+  #    condition     = var.syslog_protocol == "udp" || var.syslog_protocol == "tcp" || var.syslog_protocol == "http"
+  #    error_message = "The log management protocol must be 'udp', 'tcp' or 'http'"
+  #  }
+}
+
+variable "syslog_log_format" {
+  type        = string
+  description = "Log format used to send logs: gelf or syslog"
+  default     = "gelf"
+
+  #  validation {
+  #    condition     = var.syslog_log_format == "gelf" || var.syslog_log_format == "syslog"
+  #    error_message = "The log format must be 'gelf' or 'syslog'"
+  #  }
+}
+
+variable "syslog_hostname" {
+  type        = string
+  description = "Hostname or address of the remote log management endpoint"
+}
+
+variable "syslog_port" {
+  type        = number
+  description = "Port number of the remote log management endpoint"
+  default     = 12201
+}
+
 ##############################################################################
 # InfluxDB
 #
 
-variable "metrics_endpoint_url" {
+variable "influxdb_usage" {
+type        = bool
+description = "Do we send metrics to InfluxDB?"
+default     = false
+}
+
+variable "influxdb_endpoint" {
   type        = string
   description = "InfluxDB endpoint to send metrics"
 }
@@ -117,11 +157,6 @@ variable "influxdb_bucket" {
 variable "influxdb_org" {
   type        = string
   description = "InfluxDB org"
-}
-
-variable "logs_endpoint_url" {
-  type        = string
-  description = "Logs endpoint to send GELF messages"
 }
 
 ##############################################################################
@@ -157,7 +192,7 @@ variable "consul_dns_server" {
   default     = ""
 }
 
-variable "consul_server" {
+variable "consul_servers" {
   type        = string
   description = "Consul server IP address to join"
 }
