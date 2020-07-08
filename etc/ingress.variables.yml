@@ -89,6 +89,8 @@ dnsmasq_forwarding_zones:
 ###############################################################################
 # Consul
 #
+consul_consul_version: 1.8.0
+
 consul_retry_join: ["{{ lookup('env', 'CONSUL_SERVERS') }}"]
 consul_dns_domain: "{{ lookup('env', 'CONSUL_DNS_DOMAIN') }}"
 consul_datacenter: "{{ lookup('env', 'CONSUL_DATACENTER') }}"
