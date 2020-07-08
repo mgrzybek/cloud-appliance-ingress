@@ -53,8 +53,7 @@ podman_containers:
   after:
   run_opts: >
     --rm
-    --env HTTP_PROXY= --env HTTPS_PROXY=
-    --env http_proxy= --env https_proxy=
+    --http-proxy=false
     --publish 80:8080
     --publish 443:8443
   image: docker.io/library/traefik
