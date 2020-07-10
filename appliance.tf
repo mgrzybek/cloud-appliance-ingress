@@ -3,8 +3,8 @@
 #
 resource "openstack_compute_instance_v2" "appliance-ingress" {
   name      = "ingress"
-  image_id  = var.image_id
-  flavor_id = var.flavor_id
+  image_name  = var.image_name
+  flavor_name = var.flavor_name
 
   network {
     port = openstack_networking_port_v2.appliance-ingress-front-port.id

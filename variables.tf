@@ -2,7 +2,7 @@
 # Inputs
 #
 
-variable "image_id" {
+variable "image_name" {
   type        = string
   description = "Operating system image to use"
 }
@@ -90,7 +90,7 @@ variable "static_hosts" {
   default     = ""
 }
 
-variable "flavor_id" {
+variable "flavor_name" {
   type        = string
   description = "Cloud flavor to use"
 }
