@@ -60,8 +60,8 @@
       with_items:
       - name: traefik
         content: '{{ traefik_consul_service[0] | to_nice_json }}'
-#              - name: telegraf
-#                content: "{{ telegraf_consul_service[0] | to_nice_json }}"
+      - name: netdata
+        content: "{{ netdata_consul_service[0] | to_nice_json }}"
 
   - name: Telegraf | Install telegraf client
     when:
@@ -130,6 +130,14 @@
     register: repo_stat
     stat: path=/etc/apt/sources.list.d/projectatomic-ubuntu-ppa-{{ ansible_distribution_release }}.list
 
+  - name: Set virtualization type for netdata
+    register: virt_result
+    command: systemd-detect-virt -v
+
+  - name: Set virtualization fact
+    set_fact:
+      virtualization_type: '{{ virt_result.stdout }}'
+
   - name: Configure podman
     when: repo_stat.exists | lower == 'false'
     include_role:
@@ -147,7 +155,13 @@
       http_proxy: '{{ podman_http_proxy }}'
       no_proxy: '{{ podman_http_no_proxy }}'
 
+  - name: Check if the pods are running
+    with_items: '{{ podman_pods }}'
+    shell: |
+      if podman ps --all | grep -q {{ item.name }} ; then
+        systemctl status {{ item.name }}.container.service || podman rm -f {{ item.name }}
+      fi
+
   - name: Start the containers
     with_items: '{{ podman_containers }}'
     service: name={{ item.name }}.container.service state=started enabled=yes
-

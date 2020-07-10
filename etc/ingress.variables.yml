@@ -1,6 +1,7 @@
 ###############################################################################
 # Bootstrap
 #
+
 bootstrap_http_proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
 bootstrap_no_proxy: "{{ lookup('env', 'NO_PROXY') }}"
 bootstrap_http_proxy_packages:
@@ -48,6 +49,20 @@ podman_https_proxy: "{{ lookup('env', 'HTTPS_PROXY') }}"
 podman_no_proxy: "{{ lookup('env', 'NO_PROXY') }}"
 
 podman_containers:
+- name: netdata
+  description: Distributed, real-time, performance and health monitoring for systems and applications
+  run_opts: >
+    -e VIRTUALIZATION={{ virtualization_type }}
+    -p 19999:19999
+    -v netdatalib:/var/lib/netdata
+    -v netdatacache:/var/cache/netdata
+    -v /etc/passwd:/host/etc/passwd:ro
+    -v /etc/group:/host/etc/group:ro
+    -v /proc:/host/proc:ro
+    -v /sys:/host/sys:ro
+    -v /etc/os-release:/host/etc/os-release:ro
+    --cap-add SYS_PTRACE
+    --http-proxy=false
 - name: traefik
   description: Traefik reverse proxy
   after:
@@ -89,6 +104,7 @@ dnsmasq_forwarding_zones:
 ###############################################################################
 # Consul
 #
+
 consul_consul_version: 1.8.0
 
 consul_retry_join: ["{{ lookup('env', 'CONSUL_SERVERS') }}"]
@@ -104,10 +120,17 @@ consul_server_mode: false
 consul_consul_encrypt: "{{ lookup('env', 'CONSUL_ENCRYPT') }}"
 
 ###############################################################################
-# Docker
-#
-docker_https_proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
-docker_http_no_proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
-docker_config_consul: true
-docker_config_telegraf: true
-
+# Netdata
+# TODO: traefik metadata
+netdata_consul_service:
+- service:
+    name: netdata-{{ ansible_hostname }}
+    tags:
+    - metrics
+    - appliance
+    - magrit
+    port: 19999
+    enable_tag_override: false
+    checks:
+    - http: http://0.0.0.0:19999/api/v1/info
+      interval: 60s
