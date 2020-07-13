@@ -155,8 +155,8 @@
       http_proxy: '{{ podman_http_proxy }}'
       no_proxy: '{{ podman_http_no_proxy }}'
 
-  - name: Check if the pods are running
-    with_items: '{{ podman_pods }}'
+  - name: Check if the containers are running
+    with_items: '{{ podman_containers }}'
     shell: |
       if podman ps --all | grep -q {{ item.name }} ; then
         systemctl status {{ item.name }}.container.service || podman rm -f {{ item.name }}
