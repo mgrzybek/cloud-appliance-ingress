@@ -51,6 +51,7 @@ podman_no_proxy: "{{ lookup('env', 'NO_PROXY') }}"
 podman_containers:
 - name: netdata
   description: Distributed, real-time, performance and health monitoring for systems and applications
+  image: docker.io/netdata/netdata
   run_opts: >
     -e VIRTUALIZATION={{ virtualization_type }}
     -p 19999:19999
