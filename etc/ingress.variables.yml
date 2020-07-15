@@ -53,6 +53,7 @@ podman_containers:
   description: Distributed, real-time, performance and health monitoring for systems and applications
   image: docker.io/netdata/netdata
   run_opts: >
+    --rm
     -e VIRTUALIZATION={{ virtualization_type }}
     -p 19999:19999
     -v netdatalib:/var/lib/netdata
@@ -130,6 +131,10 @@ netdata_consul_service:
     - metrics
     - appliance
     - magrit
+    - "{{ lookup('env', 'TRAEFIK_CONSUL_PREFIX') }}.enable=true"
+    - "{{ lookup('env', 'TRAEFIK_CONSUL_PREFIX') }}.http.routers.netdata-{{ ansible_hostname }}.rule=PathPrefix(`/perf/{{ ansible_hostname }}`)"
+    - "{{ lookup('env', 'TRAEFIK_CONSUL_PREFIX') }}.http.middlewares.netdata-{{ ansible_hostname }}.stripprefix.prefixes=/perf/{{ ansible_hostname }}"
+    - "{{ lookup('env', 'TRAEFIK_CONSUL_PREFIX') }}.http.routers.netdata-{{ ansible_hostname }}.middlewares=netdata-{{ ansible_hostname }}"
     port: 19999
     enable_tag_override: false
     checks:
