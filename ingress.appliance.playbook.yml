@@ -7,7 +7,9 @@
 
   handlers:
   - name: reload consul
-    command: /usr/local/bin/consul reload
+    service:
+      name: consul
+      state: reloaded
 
   roles:
   - role: ansible-bootstrap-system
