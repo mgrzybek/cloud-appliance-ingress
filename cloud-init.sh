@@ -72,6 +72,9 @@ export CONSUL_DNS_SERVER="${consul_dns_server}"
 export CONSUL_SERVERS="${consul_servers}"
 export BACK_IP="${backoffice_ip_address}"
 
+# Set storage variables
+export CONTAINERS_VOLUME="${cinder_containers_volume}"
+
 # Traefik variables
 export TRAEFIK_CONSUL_PREFIX="${traefik_consul_prefix}"
 

@@ -2,7 +2,7 @@
 # Instances
 #
 resource "openstack_compute_instance_v2" "appliance-ingress" {
-  name      = "ingress"
+  name        = "ingress"
   image_name  = var.image_name
   flavor_name = var.flavor_name
 
@@ -16,6 +16,8 @@ resource "openstack_compute_instance_v2" "appliance-ingress" {
       internet_http_proxy_url = var.internet_http_proxy_url
       internet_http_no_proxy  = var.internet_http_no_proxy
       static_hosts            = var.static_hosts
+
+      cinder_containers_volume = openstack_blockstorage_volume_v2.appliance-ingress-containers.id
 
       os_auth_url    = var.os_auth_url
       os_username    = var.os_username
