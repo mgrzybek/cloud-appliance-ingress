@@ -99,10 +99,10 @@ podman_containers:
 
 dnsmasq_main_conf:
   servers:
-  - "{{ lookup('env', 'consul_dns_server') }}"
+  - "{{ lookup('env', 'CONSUL_DNS_SERVER') }}"
 
 dnsmasq_forwarding_zones:
-- name: "{{ lookup('env', 'consul_dns_domain') }}"
+- name: "{{ lookup('env', 'CONSUL_DNS_DOMAIN') }}"
   forwarder:
     hostname: 127.0.0.1
     port: 8600
