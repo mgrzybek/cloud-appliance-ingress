@@ -11,6 +11,12 @@ bootstrap_http_proxy_packages_per_repo:
 - host: ppa.launchpad.net
   proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
 
+bootstrap_syslog_disable_local_storage: false
+bootstrap_syslog_target_host: "{{ lookup('env', 'SYSLOG_HOSTNAME') }}"
+bootstrap_syslog_target_port: "{{ lookup('env', 'SYSLOG_PORT') }}"
+bootstrap_syslog_target_protocol: "{{ lookup('env', 'SYSLOG_PROTOCOL') }}"
+bootstrap_syslog_target_log_format: "{{ lookup('env', 'SYSLOG_LOG_FORMAT') }}"
+
 ###############################################################################
 # Telegraf
 #

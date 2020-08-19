@@ -63,6 +63,12 @@ export INFLUXDB_TOKEN="${influxdb_token}"
 export INFLUXDB_BUCKET=${influxdb_bucket}
 export INFLUXDB_ENDPOINT="${influxdb_endpoint}"
 
+# Set Syslog remote endpoint
+export SYSLOG_PROTOCOL="${syslog_protocol}"
+export SYSLOG_LOG_FORMAT="${syslog_log_format}"
+export SYSLOG_HOSTNAME="${syslog_hostname}"
+export SYSLOG_PORT="${syslog_port}"
+
 # Set Consul variables
 export CONSUL_USAGE="${consul_usage}"
 export CONSUL_DNS_DOMAIN="${consul_dns_domain}"
