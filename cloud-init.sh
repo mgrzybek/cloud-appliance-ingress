@@ -80,6 +80,7 @@ export BACK_IP="${backoffice_ip_address}"
 
 # Set storage variables
 export CONTAINERS_VOLUME="${cinder_containers_volume}"
+export LOGS_CONTAINER=${logs_container}
 
 # Traefik variables
 export TRAEFIK_CONSUL_PREFIX="${traefik_consul_prefix}"
@@ -103,3 +104,13 @@ time udevadm settle
 # Stop secure shell
 #systemctl stop ssh
 #systemctl disable ssh
+
+
+# Sending logs to swift
+swift upload \
+	--object-name "$HOSTNAME.cloud-init.$(date -u +"%Y-%m-%dT%H:%M:%SZ").log" \
+	$LOGS_CONTAINER /var/log/cloud-init-output.log
+journalctl | swift upload \
+	--object-name "$HOSTNAME.journal.$(date -u +"%Y-%m-%dT%H:%M:%SZ").log" \
+	$LOGS_CONTAINER -
+

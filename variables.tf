@@ -129,6 +129,13 @@ variable "syslog_port" {
   default     = 12201
 }
 
+
+variable "logs_container" {
+  type        = string
+  description = "Swift container to use for cloud-init logs"
+  default     = "logs"
+}
+
 ##############################################################################
 # InfluxDB
 #
