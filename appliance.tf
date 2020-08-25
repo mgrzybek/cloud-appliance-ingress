@@ -41,6 +41,8 @@ resource "openstack_compute_instance_v2" "appliance-ingress" {
       syslog_protocol   = var.syslog_protocol
       syslog_log_format = var.syslog_log_format
 
+      logs_container = var.logs_container
+
       influxdb_usage    = var.influxdb_usage
       influxdb_endpoint = var.influxdb_endpoint
       influxdb_token    = var.influxdb_token
