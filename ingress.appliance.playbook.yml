@@ -63,7 +63,7 @@
       - name: traefik
         content: '{{ traefik_consul_service[0] | to_nice_json }}'
       - name: netdata
-        content: "{{ netdata_consul_service[0] | to_nice_json }}"
+        content: '{{ netdata_consul_service[0] | to_nice_json }}'
 
   - name: Telegraf | Install telegraf client
     when:
@@ -73,6 +73,30 @@
     - lookup('env', 'INFLUXDB_BUCKET') | length > 0
     include_role:
       name: ansible-telegraf
+
+  - name: Netdata
+    when: ansible_pkg_mgr | lower == 'apt'
+    block:
+    - name: Netdata | Install package
+      package:
+        name: netdata
+        state: present
+
+    - name: Netdata | Configure service
+      notify: restart netdata
+      lineinfile:
+        path: /etc/netdata/netdata.conf
+        regexp: ^(\s+)bind socket to IP =
+        line: \1bind socket to IP = {{ consul_bind }}
+
+    - name: Netdata | Configure consul service
+      notify: reload consul
+      copy:
+        content: '{{ item.content }}'
+        dest: /etc/consul.d/{{ item.name }}.json
+      with_items:
+      - name: netdata
+        content: '{{ netdata_consul_service[0] | to_nice_json }}'
 
 ###############################################################################
 # Containers

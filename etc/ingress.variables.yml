@@ -58,22 +58,6 @@ podman_https_proxy: "{{ lookup('env', 'HTTPS_PROXY') }}"
 podman_no_proxy: "{{ lookup('env', 'NO_PROXY') }}"
 
 podman_containers:
-- name: netdata
-  description: Distributed, real-time, performance and health monitoring for systems and applications
-  image: docker.io/netdata/netdata
-  run_opts: >
-    --rm
-    -e VIRTUALIZATION={{ virtualization_type }}
-    -p 19999:19999
-    -v netdatalib:/var/lib/netdata
-    -v netdatacache:/var/cache/netdata
-    -v /etc/passwd:/host/etc/passwd:ro
-    -v /etc/group:/host/etc/group:ro
-    -v /proc:/host/proc:ro
-    -v /sys:/host/sys:ro
-    -v /etc/os-release:/host/etc/os-release:ro
-    --cap-add SYS_PTRACE
-    --http-proxy=false
 - name: traefik
   description: Traefik reverse proxy
   after:
@@ -118,19 +102,19 @@ dnsmasq_forwarding_zones:
 ###############################################################################
 # Consul
 #
-
-consul_consul_version: 1.8.0
+consul_server_mode: false
 
 consul_retry_join: ["{{ lookup('env', 'CONSUL_SERVERS') }}"]
 consul_dns_domain: "{{ lookup('env', 'CONSUL_DNS_DOMAIN') }}"
 consul_datacenter: "{{ lookup('env', 'CONSUL_DATACENTER') }}"
+
 consul_http_proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
 consul_http_no_proxy: "{{ lookup('env', 'NO_PROXY') }}"
+
 consul_bind: "{{ lookup('env', 'BACK_IP') }}"
 consul_advertise_addr: "{{ lookup('env', 'BACK_IP') }}"
 consul_serf_lan_bind: "{{ lookup('env', 'BACK_IP') }}"
 consul_client_addr: [0.0.0.0]
-consul_server_mode: false
 consul_consul_encrypt: "{{ lookup('env', 'CONSUL_ENCRYPT') }}"
 
 ###############################################################################
@@ -150,5 +134,5 @@ netdata_consul_service:
     port: 19999
     enable_tag_override: false
     checks:
-    - http: http://0.0.0.0:19999/api/v1/info
+    - http: http://0.0.0.0:19999/
       interval: 60s
