@@ -11,6 +11,11 @@
       name: consul
       state: reloaded
 
+  - name: restart netdata
+    service:
+      name: netdata
+      state: restarted
+
   roles:
   - role: ansible-bootstrap-system
 
