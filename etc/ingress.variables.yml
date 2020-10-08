@@ -118,6 +118,15 @@ consul_client_addr: [0.0.0.0]
 consul_consul_encrypt: "{{ lookup('env', 'CONSUL_ENCRYPT') }}"
 
 ###############################################################################
+# Nomad
+#
+nomad_http_proxy: "{{ lookup('env', 'HTTP_PROXY') }}"
+nomad_http_no_proxy: "{{ lookup('env', 'NO_PROXY') }}"
+
+nomad_address_rpc: "{{ lookup('env', 'BACK_IP') }}"
+nomad_advertise_rpc: "{{ lookup('env', 'BACK_IP') }}"
+
+###############################################################################
 # Netdata
 # TODO: traefik metadata
 netdata_consul_service:
