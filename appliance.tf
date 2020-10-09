@@ -89,6 +89,16 @@ resource "openstack_networking_secgroup_rule_v2" "appliance-ingress-secgroup-htt
   security_group_id = openstack_networking_secgroup_v2.appliance-ingress-secgroup.id
 }
 
+resource "openstack_networking_secgroup_rule_v2" "ingress_consul_allow_serf_lan_tcp_inbound" {
+  ethertype      = "IPv4"
+  direction      = "ingress"
+  port_range_min = var.consul_serf_lan_port
+  port_range_max = var.consul_serf_lan_port
+  protocol       = "tcp"
+
+  security_group_id = openstack_networking_secgroup_v2.appliance-ingress-secgroup.id
+}
+
 resource "openstack_networking_secgroup_rule_v2" "appliance-ingress-secgroup-netdata" {
   direction         = "ingress"
   ethertype         = "IPv4"

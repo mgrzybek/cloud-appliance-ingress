@@ -204,6 +204,12 @@ variable "consul_servers" {
   description = "Consul server IP address to join"
 }
 
+variable "consul_serf_lan_port" {
+  description = "The port used to handle gossip in the LAN. Required by all agents."
+  type        = number
+  default     = 8301
+}
+
 ##############################################################################
 # Traefik 
 #

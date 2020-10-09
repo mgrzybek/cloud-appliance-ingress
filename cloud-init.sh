@@ -4,10 +4,10 @@ set -x
 # Proxy
 export HTTPS_PROXY=${internet_http_proxy_url}
 export HTTP_PROXY=${internet_http_proxy_url}
-export NO_PROXY=${internet_http_no_proxy},127.0.0.1,localhost,0.0.0.0
+export NO_PROXY=${internet_http_no_proxy},127.0.0.1,localhost,0.0.0.0,${backoffice_ip_address}
 export https_proxy=${internet_http_proxy_url}
 export http_proxy=${internet_http_proxy_url}
-export no_proxy=${internet_http_no_proxy},127.0.0.1,localhost,0.0.0.0
+export no_proxy=${internet_http_no_proxy},127.0.0.1,localhost,0.0.0.0,${backoffice_ip_address}
 
 # Install required packages to start git-ops-based auto-configuratiom
 if which yum > /dev/null 2>&1 ; then
