@@ -17,6 +17,8 @@ bootstrap_syslog_target_port: "{{ lookup('env', 'SYSLOG_PORT') }}"
 bootstrap_syslog_target_protocol: "{{ lookup('env', 'SYSLOG_PROTOCOL') }}"
 bootstrap_syslog_target_log_format: "{{ lookup('env', 'SYSLOG_LOG_FORMAT') }}"
 
+bootstrap_selinux_config_mode: disabled
+
 ###############################################################################
 # Telegraf
 #
