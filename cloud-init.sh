@@ -17,27 +17,31 @@ if which yum > /dev/null 2>&1 ; then
 		grep -q proxy= /etc/yum.conf || echo "proxy=$HTTP_PROXY" >> /etc/yum.conf
 	fi
 
-	yum install --assumeyes ansible git jq > /dev/null
+	_ansible_repo=$(yum search centos-release-ansible | awk '/^centos-release-ansible/ {print $1}' | tail -n1)
+	_openstack_repo=$(yum search centos-release-openstack | awk '/^centos-release-openstack/ {print $1}' | tail -n1)
+	
+	yum install --assumeyes $_ansible_repo $_openstack_repo
+	yum install --assumeyes ansible git jq python3-swiftclient
 else
-	apt update > /dev/null
-	apt -y install ansible git jq python3-swiftclient python3-openstackclient > /dev/null
+	apt update
+	apt -y install ansible git jq python3-swiftclient unzip
 fi
 
 # DNS: Populate /etc/hosts
 if [ ! -z "${static_hosts}" ] ; then
 	echo ${static_hosts} > /tmp/static_hosts
 	cat /tmp/static_hosts \
-	| perl -pe 's/\[|\]|{|}//g' \
-	|  tr ',' '\n' \
-	| awk -F: '{print $2,$1}' \
-	| awk '{print $1,$2}' \
-	>> /etc/hosts
+		| awk '{gsub("\[|\]|{|}","");print}' \
+		| tr ',' '\n' \
+		| awk -F: '{print $2,$1}' \
+		| awk '{print $1,$2}' \
+		>> /etc/hosts
 fi
 
 # Configure ansible to work without an entire environment set
 sed -i 's/~/\/root/' /etc/ansible/ansible.cfg
 sed -i 's/^#remote_tmp/remote_tmp/' /etc/ansible/ansible.cfg
-sed -i 's/^#local_tmp/remote_tmp/' /etc/ansible/ansible.cfg
+sed -i 's/^#local_tmp/local_tmp/' /etc/ansible/ansible.cfg
 
 # Create local facts folder
 mkdir -p /etc/ansible/facts.d
