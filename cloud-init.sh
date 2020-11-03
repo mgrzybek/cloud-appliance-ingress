@@ -27,11 +27,11 @@ fi
 if [ ! -z "${static_hosts}" ] ; then
 	echo ${static_hosts} > /tmp/static_hosts
 	cat /tmp/static_hosts \
-	| perl -pe 's/\[|\]|{|}//g' \
-	|  tr ',' '\n' \
-	| awk -F: '{print $2,$1}' \
-	| awk '{print $1,$2}' \
-	>> /etc/hosts
+		| awk '{gsub("\[|\]|{|}","");print}' \
+		| tr ',' '\n' \
+		| awk -F: '{print $2,$1}' \
+		| awk '{print $1,$2}' \
+		>> /etc/hosts
 fi
 
 # Configure ansible to work without an entire environment set
