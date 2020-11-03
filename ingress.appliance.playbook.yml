@@ -172,7 +172,7 @@
 
   - name: Configure podman
     when:
-    - ansible_pkg_mgr | lower == 'apt' and repo_stat.exists is defined and repo_stat.exists | lower == 'false' or ansible_pkg_mgr | lower == 'rpm'
+    - ansible_pkg_mgr | lower == 'apt' and repo_stat.exists is defined and repo_stat.exists | lower == 'false' or not ansible_pkg_mgr | lower == 'apt'
     include_role:
       name: ansible-podman
 
