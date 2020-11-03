@@ -37,7 +37,7 @@ fi
 # Configure ansible to work without an entire environment set
 sed -i 's/~/\/root/' /etc/ansible/ansible.cfg
 sed -i 's/^#remote_tmp/remote_tmp/' /etc/ansible/ansible.cfg
-sed -i 's/^#local_tmp/remote_tmp/' /etc/ansible/ansible.cfg
+sed -i 's/^#local_tmp/local_tmp/' /etc/ansible/ansible.cfg
 
 # Create local facts folder
 mkdir -p /etc/ansible/facts.d
