@@ -188,7 +188,7 @@
     environment:
       https_proxy: '{{ podman_https_proxy }}'
       http_proxy: '{{ podman_http_proxy }}'
-      no_proxy: '{{ podman_http_no_proxy }}'
+      no_proxy: '{{ podman_no_proxy }}'
 
   - name: Check if the containers are running
     with_items: '{{ podman_containers }}'
