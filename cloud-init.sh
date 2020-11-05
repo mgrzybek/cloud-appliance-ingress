@@ -29,7 +29,7 @@ if which yum > /dev/null 2>&1 ; then
 
 	yum install --assumeyes \
 		ansible git jq \
-		python3-swift python3-openstackclient python3-openstackclient \
+		python3-swiftclient python3-openstackclient \
 		unzip > /dev/null
 	if [ $? -ne 0 ] ; then
 		send_logs
