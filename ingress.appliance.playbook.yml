@@ -157,10 +157,10 @@
         state: mounted
         fstype: xfs
 
-  - name: Check project atomic ppa repo
-    register: repo_stat
-    when: ansible_pkg_mgr | lower == 'apt'
-    stat: path=/etc/apt/sources.list.d/projectatomic-ubuntu-ppa-{{ ansible_distribution_release }}.list
+  - name: Check podman binary
+    register: which_podman
+    command: which podman
+    ignore_errors: true
 
   - name: Set virtualization type for netdata
     register: virt_result
@@ -171,8 +171,7 @@
       virtualization_type: '{{ virt_result.stdout }}'
 
   - name: Configure podman
-    when:
-    - ansible_pkg_mgr | lower == 'apt' and repo_stat.exists is defined and repo_stat.exists | lower == 'false' or not ansible_pkg_mgr | lower == 'apt'
+    when: which_podman.rc > 0
     include_role:
       name: ansible-podman
 
